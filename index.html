@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tab Navigation with Hash URLs</title>
+<style>
+  .tab-content {
+    display: none;
+  }
+  .tab-content.active {
+    display: block;
+  }
+  .tab-links a.active {
+    background-color: #ccc;
+  }
+</style>
+</head>
+<body>
+
+<!-- Tab links -->
+<ul class="tab-links">
+  <li><a href="#tab1">Tab 1</a></li>
+  <li><a href="#tab2">Tab 2</a></li>
+  <li><a href="#tab3">Tab 3</a></li>
+</ul>
+
+<!-- Tab content -->
+<div id="tab1" class="tab-content">Content of Tab 1</div>
+<div id="tab2" class="tab-content">Content of Tab 2</div>
+<div id="tab3" class="tab-content">Content of Tab 3</div>
+
+<script>
+  function switchTab() {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+      tab.style.display = 'none';
+      tab.classList.remove('active');
+    });
+
+    // Show the active tab based on URL hash
+    const activeTab = document.querySelector(location.hash + '.tab-content');
+    if (activeTab) {
+      activeTab.style.display = 'block';
+      activeTab.classList.add('active');
+    } else {
+      // Fallback to first tab if hash is unknown
+      document.querySelector('.tab-content').style.display = 'block';
+      document.querySelector('.tab-content').classList.add('active');
+    }
+
+    // Update active class for tab links
+    document.querySelectorAll('.tab-links a').forEach(link => {
+      if (link.getAttribute('href') === location.hash) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
+      }
+    });
+  }
+
+  // Listen for hash change to switch tabs
+  window.addEventListener('hashchange', switchTab);
+
+  // Initial switch to the tab if there's a hash in the URL or default to first tab
+  if (window.location.hash) {
+    switchTab();
+  } else {
+    window.location.hash = '#tab1'; // Default to first tab
+  }
+</script>
+
+</body>
+</html>
