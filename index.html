@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tab Navigation with Hash URLs</title>
+<title>Tab Navigation with Optional Hash URLs</title>
 <style>
   .tab-content {
     display: none;
@@ -32,42 +32,44 @@
 
 <script>
   function switchTab() {
-    // Hide all tabs
-    document.querySelectorAll('.tab-content').forEach(tab => {
+    const tabs = document.querySelectorAll('.tab-content');
+    const links = document.querySelectorAll('.tab-links a');
+
+    // Hide all tabs and remove 'active' class
+    tabs.forEach(tab => {
       tab.style.display = 'none';
-      tab.classList.remove('active');
+    });
+    links.forEach(link => {
+      link.classList.remove('active');
     });
 
     // Show the active tab based on URL hash
-    const activeTab = document.querySelector(location.hash + '.tab-content');
-    if (activeTab) {
-      activeTab.style.display = 'block';
-      activeTab.classList.add('active');
-    } else {
-      // Fallback to first tab if hash is unknown
-      document.querySelector('.tab-content').style.display = 'block';
-      document.querySelector('.tab-content').classList.add('active');
-    }
-
-    // Update active class for tab links
-    document.querySelectorAll('.tab-links a').forEach(link => {
-      if (link.getAttribute('href') === location.hash) {
-        link.classList.add('active');
-      } else {
-        link.classList.remove('active');
+    if (window.location.hash) {
+      const activeTab = document.querySelector(location.hash + '.tab-content');
+      const activeLink = document.querySelector('.tab-links a[href="' + location.hash + '"]');
+      
+      if (activeTab) {
+        activeTab.style.display = 'block';
+        activeTab.classList.add('active');
       }
+      
+      if (activeLink) {
+        activeLink.classList.add('active');
+      }
+    }
+  }
+
+  // Attach click event listener to tab links
+  document.querySelectorAll('.tab-links a').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault(); // Prevent default anchor click behavior
+      window.location.hash = this.getAttribute('href'); // Update URL hash
+      switchTab(); // Manually switch the tab
     });
-  }
+  });
 
-  // Listen for hash change to switch tabs
-  window.addEventListener('hashchange', switchTab);
-
-  // Initial switch to the tab if there's a hash in the URL or default to first tab
-  if (window.location.hash) {
-    switchTab();
-  } else {
-    window.location.hash = '#tab1'; // Default to first tab
-  }
+  // Initial tab switch based on the current URL hash
+  switchTab();
 </script>
 
 </body>
